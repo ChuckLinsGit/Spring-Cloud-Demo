@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: server
+  #    使用加入了中间件的zipkin管理时需要去掉zipkin.base-url
+server:
+  port: 1001
+
+#注册eureka服务端
+eureka:
+  instance:
+    hostname: localhost
+  #禁止本身注册客户端
+  client:
+    fetch-registry: false
+    register-with-eureka: false

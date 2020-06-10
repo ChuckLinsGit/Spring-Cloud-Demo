@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: swagger-1
+
+server:
+  port: 2112
+
+#eureka客户端设置，设置服务中心url
+eureka:
+  client:
+    #实际上serviceUrl属性在自动提示中并不存在，但设置和运行没有问题
+    serviceUrl:
+      defaultZone: http://localhost:1001/eureka/
+
+swagger:
+  base-package: com.example.cloudclient.controller

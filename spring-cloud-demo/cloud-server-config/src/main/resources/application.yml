@@ -1,0 +1,66 @@
+spring:
+  application:
+#    注意：应用一定要与仓库中文件的前缀一致，如本应用的配置文件名应该为：config-demo-*.yml{properties}
+#    否则访问不到配置
+    name: config-demo
+#  可以通过拼接下列uri完成访问
+#  /{application}/{profile}[/{label}]：将返回Jason格式的数据
+#    以下使用浏览器或postman访问将以文件格式出现
+#  /{application}-{profile}.yml
+#  /{label}/{application}-{profile}.yml
+#  /{application}-{profile}.properties
+#  /{label}/{application}-{profile}.properties
+  cloud:
+    config:
+
+      server:
+        git:
+          uri: https://github.com/ChuckLinsGit/spring-server-config/
+#          需要权限时使用用户和密码
+#          username:
+#          password:
+
+server:
+  port: 1011
+
+#eureka客户端设置
+eureka:
+  client:
+    #实际上serviceUrl属性在自动提示中并不存在，但设置和运行没有问题
+    serviceUrl:
+      defaultZone: http://localhost:1001/eureka/
+
+#使用JCE对配置中心进行安全加密
+#准备工作：
+#  下载无限制版本的JCE覆盖jre/lib中的jar
+#测试：
+#  访问/encrypt/status 如果得到status=OK则完成准备工作
+#配置：
+encrypt:
+  #  对称加密：配置key
+    key: chuck
+
+  #  非对称加密：
+  #  使用Java的keytool工具生成keystore文件，命令如下：
+  #  keytool -genkeypair -alias config-server -keyalg RSA \
+  #  -dname "CN=Chuck,OU=company,O=organization,L=city,ST=province C=china" \
+  #  -keypass 123456 \    #密钥库密令
+  #  -keystore config-server.keystore \ #密钥库名称
+  #  -storepass 123456    #密令
+  #  -validity 365  #延长时效
+  #  文件将生成在当前命令的目录下。
+  #  将生成的文件放在resource目录并配置如下：
+#  key-store:
+#    location: config-server.keystore
+#    alias:  config-server
+#    password: 123456    #storepass
+#    secret: 123456      #keypass
+
+#使用
+  #  post请求/encrypt携带信息进行加密，返回加密后的信息
+  #  post请求/decrypt携带加密后的信息，返回加密前的信息
+  #  可以使用curl命令
+  #  $ curl localhost:7001/encrypt -d didispace
+  #  3c70a809bfa24ab88bcb5e1df51cb9e4dd4b8fec88301eb7a18177f1769c849ae9c9f29400c920480be2c99406ae28c7
+  #  $ curl localhost:7001/decrypt -d  3c70a809bfa24ab88bcb5e1df51cb9e4dd4b8fec88301eb7a18177f1769c849ae9c9f29400c920480be2c99406ae28c7
+  #  didispace

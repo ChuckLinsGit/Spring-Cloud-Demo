@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: client
+  cloud:
+    #配置管道的exchange、消费组和分区
+    stream:
+      bindings:
+        output:
+          destination: sendinput
+          producer:
+            #消息分区：同一个消息只会被同一个实例获取消费
+            #通过该参数指定了分区键值的表达规则,该参数可以使用SpEL
+            #如果partitionKeyExpression的值是payload，将会使用整个我们放在GenericMessage中的信息计算出目标分区索引号
+            partitionKeyExpression: payload
+            partitionCount: 2
+        myqueue:
+          destination: my-queue
+    #发现配置中心,如下配置，则会前往localhost:1011/client/dev中寻找配置
+    #特别注意：此处要使用boostrap.yml来配置config
+    #因为boostrap.yml优先级比application.yml高，而discovery.enabled在boostrap.yml中默认false，因此如果不在boostrap.yml中声明，则无法开启config发现
+
+#    此外通过引入心跳包，使用refresh来更新配置：以post方式访问/refresh
+#    config:
+#      discovery:
+#        enabled: true
+#        service-id: config-demo
+#      profile: dev #资源定位，用来指定对应的配置文件
+#      uri: http://localhost:1011
+
+server:
+  port: 2001
+
+#eureka客户端设置，设置服务中心url
+eureka:
+  client:
+    #实际上serviceUrl属性在自动提示中并不存在，但设置和运行没有问题
+    serviceUrl:
+      defaultZone: http://localhost:1001/eureka/
+
+#如果引入springboot2.0之后的actutator需要配置如下
+management:
+#  需要关闭安全措施，否则访问会报401
+  security:
+    enabled: false
+#  server:
+#    port: 2002
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: hystrix-turbine
+
+server:
+  port: 2021
+
+management:
+  port: 2013
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:1001/eureka/
+
+#使用turbine的主要目的是为了针对多个端点（甚至是集群）进行监控，是对dashboard的升级
+turbine:
+  #设置通过主机号和端口号的组合来区分服务，默认情况下只通过主机号区分
+  #惊奇地发现，上一行“默认情况”前出现“否”字会影响解析，即便是出现再注解中，有点搞笑
+  combine-host-port: true
+  #指定需要监控的服务
+  app-config: consumer-ribbon-hystrix
+  #多个turbine服务可用构成多个集群，集群靠此配置区分
+  #此处一定要用new String()将表达式包住，否则会报Property or field 'default' cannot be found on object of type 'com.netflix.appinfo.InstanceInfo'
+  cluster-name-expression: new String('default')

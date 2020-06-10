@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: cloud-gateway-zuul
+
+server:
+  port: 3012
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:1001/eureka/
+
+#具备Eureka或Consul等服务治理框架情况下的路由配置方法：
+zuul:
+  routes:
+#    简洁配置: serviceId=path
+      client: /client-service/**
+      swagger-1: /swagger-1/**
+      swagger-2: /swagger-2/**
+#    完整配置
+#    client-service:
+#      path: /client-service/**
+#      serviceId: client
+
+
+
+
+
+#缺少Eureka或Consul服务治理框架情况下的路由配置方法：
+#  单服务实例
+#zuul:
+#  routes:
+#    client-service:
+#      path: /client-service/**
+#      url: http://localhost:2001/
+
+#  多服务实例:通过serviceId来绑定url
+#zuul:
+#  routes:
+#    client-service:
+#      path: /client-service/**
+#      serviceId: client-service
+##缺少服务治理，需要取消ribbon自动搜索服务治理中心serviceId的动作，否则将无法得到自定义的serviceId
+#ribbon:
+#  eureka:
+#    enabled: false
+##自定义serviceId
+#client-service:
+#  ribbon:
+#    listOfServers: http://localhost:2001/,http://localhost:2002/
+
